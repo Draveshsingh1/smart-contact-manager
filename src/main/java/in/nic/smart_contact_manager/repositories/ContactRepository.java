@@ -24,3 +24,4 @@ public interface ContactRepository extends JpaRepository<Contact, String> {
     @RestResource(path = "by-name")
     List<Contact> findByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
 }
+

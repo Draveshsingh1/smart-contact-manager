@@ -1,5 +1,6 @@
 package in.nic.smart_contact_manager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -46,7 +47,7 @@ public class User {
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
 
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     private boolean emailVerified = false;
 
@@ -55,9 +56,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Providers providers = Providers.SELF;
 
+    private String providerUserId;
+
     @Size(max = 255, message = "Email token must be at most 255 characters")
     private String emailToken;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
+
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Contact> contacts = new LinkedHashSet<>();
 }
